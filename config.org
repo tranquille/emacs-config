@@ -2,8 +2,29 @@
 ** Theme
 #+begin_src emacs-lisp
 (use-package spacemacs-theme
-    :ensure t)
+    :ensure t
+    :defer t
+    :init (load-theme 'spacemacs-dark t))
 #+end_src
+** Look & Feel
+*** Remove startup screen
+We use an actual replacement for it, keep reading or head directly to [[dashboard]]
+#+BEGIN_SRC emacs-lisp
+(setq inhibit-startup-message t)
+#+END_SRC
+*** disable menu 
+If you like using any of those, change -1 to 1.
+#+BEGIN_SRC emacs-lisp
+(tool-bar-mode -1)
+(menu-bar-mode -1)
+(scroll-bar-mode -1)
+#+END_SRC
+* Mac OS related
+** fix some keys
+On mac os the keybindgs a somehow messed up, without this settings we are not able to type a couple characters like braces. 
+#+BEGIN_SRC emacs-lisp
+(setq mac-right-option-modifier nil)
+#+END_SRC
 * Git integration
 Countless are the times where I opened ansi-term to use =git= on something.
 These times are also something that I'd prefer stay in the past, since =magit= is

@@ -1,2 +1,7 @@
 /config.el
 /straight/
+/old_init-config.el
+/elpa/
+/config/
+/auto-save-list/
+.emacs.desktop
