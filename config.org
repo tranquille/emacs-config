@@ -20,7 +20,7 @@ If you like using any of those, change -1 to 1.
 (scroll-bar-mode -1)
 #+END_SRC
 *** disable bell
-#+BEGIN_SRC 
+#+BEGIN_SRC emacs-lisp
 (setq ring-bell-function 'ignore)
 #+END_SRC
 *** Set UTF-8 Encoding
