@@ -1,3 +1,20 @@
+;;; This fixed garbage collection, makes emacs start up faster ;;;;;;;
+(setq gc-cons-threshold 402653184
+      gc-cons-percentage 0.6)
+
+(defvar startup/file-name-handler-alist file-name-handler-alist)
+(setq file-name-handler-alist nil)
+
+(defun startup/revert-file-name-handler-alist ()
+  (setq file-name-handler-alist startup/file-name-handler-alist))
+
+(defun startup/reset-gc ()
+  (setq gc-cons-threshold 16777216
+	gc-cons-percentage 0.1))
+
+(add-hook 'emacs-startup-hook 'startup/revert-file-name-handler-alist)
+(add-hook 'emacs-startup-hook 'startup/reset-gc)
+
 ;;; This is all kinds of necessary
 (require 'package)
 (setq package-enable-at-startup nil)
@@ -30,7 +47,9 @@
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
    '("bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default))
- '(package-selected-packages '(pretty-mode magit spacemacs-theme use-package)))
+ '(fancy-battery-mode t)
+ '(package-selected-packages
+   '(diminish org-bullets htmlize sudo-edit company-jedi yasnippet-snippets company flycheck yasnippet mark-multiple zzz-to-char hungry-delete expand-region rainbow-delimiters rainbow-mode beacon helm linum-relative swiper switch-window which-key ivy fancy-battery spaceline dashboard projectile pretty-mode magit spacemacs-theme use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
