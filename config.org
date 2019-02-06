@@ -68,11 +68,34 @@ Lets us use asynchronous processes wherever possible, pretty useful...
     :ensure t
     :init (dired-async-mode 1))
 #+END_SRC
-* Mac OS related
-** fix some keys
-On mac os the keybindgs a somehow messed up, without this settings we are not able to type a couple characters like braces. 
+** Default browser
 #+BEGIN_SRC emacs-lisp
-(setq mac-right-option-modifier nil)
+(setq browse-url-browser-function 'browse-url-generic
+      browse-url-generic-program "firefox")
+#+END_SRC
+* Projectile
+Projectile is an awesome project manager, mostly because it recognizes
+directories with a =.git= directory as projects and helps you manage them accordingly.
+** Enable projectile globally
+This makes sure that everything can be a project.
+#+BEGIN_SRC emacs-lisp
+  (use-package projectile
+    :ensure t
+    :init
+    (projectile-mode 1))
+#+END_SRC
+* Dashboard
+This is your new startup screen, together with projectile it works in unison and provides
+you with a quick look into your latest projects and files. Change the welcome message to 
+whatever string you want and change the numbers to suit your liking, I find 5 to be enough.
+#+BEGIN_SRC emacs-lisp
+  (use-package dashboard
+    :ensure t
+    :config
+    (dashboard-setup-startup-hook)
+    (setq dashboard-items '((recents . 5)
+			    (projects . 5)))
+    (setq dashboard-banner-logo-title ""))
 #+END_SRC
 * Git integration
 Countless are the times where I opened ansi-term to use =git= on something.
@@ -83,4 +106,3 @@ great. It's easy and intuitive to use, shows its options at a keypress and much 
   (use-package magit
     :ensure t)
 #+END_SRC
-
