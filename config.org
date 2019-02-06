@@ -19,6 +19,49 @@ If you like using any of those, change -1 to 1.
 (menu-bar-mode -1)
 (scroll-bar-mode -1)
 #+END_SRC
+*** disable bell
+#+BEGIN_SRC 
+(setq ring-bell-function 'ignore)
+#+END_SRC
+*** Set UTF-8 Encoding
+#+BEGIN_SRC emacs-lisp
+(setq local-encoding-system 'utf-8)
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+(set-selection-coding-system 'utf-8)
+(prefer-coding-system 'utf-8)
+#+END_SRC
+*** Highlight current line
+#+BEGIN_SRC emacs-lisp
+(when window-system (add-hook 'prog-mode-hook 'hl-line-mode))
+#+END_SRC
+*** Pretty symbols
+Changes =lambda= to an actual symbol and a few others as well, only in the GUI version though.
+#+BEGIN_SRC emacs-lisp
+  (when window-system
+    (use-package pretty-mode
+      :ensure t
+      :config
+      (global-pretty-mode t)))
+
+#+END_SRC
+* Functionality
+** Disable backups and auto-saves
+#+BEGIN_SRC emacs-lisp
+(setq make-backup-files nil)
+(setq auto-save-default nil)
+#+END_SRC
+** Change yes-or-no questions into y-or-n querstions
+#+BEGIN_SRC emacs-lisp
+(defalias 'yes-or-no-p 'y-or-n-p)
+#+END_SRC
+** Async
+Lets us use asynchronous processes wherever possible, pretty useful...
+#+BEGIN_SRC emacs-lisp
+  (use-package async
+    :ensure t
+    :init (dired-async-mode 1))
+#+END_SRC
 * Mac OS related
 ** fix some keys
 On mac os the keybindgs a somehow messed up, without this settings we are not able to type a couple characters like braces. 
