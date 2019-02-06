@@ -118,7 +118,35 @@ This enables spaceline, it looks better and works very well.
 #+BEGIN_SRC emacs-lisp
   (setq powerline-default-separator nil)
 #+END_SRC
+** Cursor position
+Show the current line and column for your corsor. We are not going to have =relative-linum-mode= in every major mode, so this is useful.
+#+BEGIN_SRC emacs-lisp
+  (setq line-number-mode t)
+  (setq column-number-mode t)
+#+END_SRC
+** Clock
+If you prefer the 12hr-format, change the variable to =nil= instead of =t=.
+*** Time format
+#+BEGIN_SRC emacs-lisp
+  (setq display-time-24hr-format t)
+  (setq display-time-format "%H:%M - %d %B %Y")
+#+END_SRC
+*** Enabling the clock
+#+BEGIN_SRC emacs-lisp
+(display-time-mode 1)
+#+END_SRC
+** Battery indicator
+#+BEGIN_SRC emacs-lisp
+  (use-package fancy-battery
+    :ensure t
+    :config
+    (setq fancy-battery-show-percentage t)
+    (setq battery-update-interval 30)
+    (if window-system
+	(fancy-battery-mode)
+      (display-battery-mode)))
 
+#+END_SRC
 * Git integration
 Countless are the times where I opened ansi-term to use =git= on something.
 These times are also something that I'd prefer stay in the past, since =magit= is
