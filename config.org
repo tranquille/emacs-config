@@ -1,0 +1,8 @@
+* Git integration
+Countless are the times where I opened ansi-term to use =git= on something.
+These times are also something that I'd prefer stay in the past, since =magit= is
+great. It's easy and intuitive to use, shows its options at a keypress and much more.
+** magit
+#+BEGIN_SRC emacs-lisp
+  (use-package magit)
+#+END_SRC
