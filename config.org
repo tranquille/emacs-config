@@ -8,7 +8,7 @@
 #+end_src
 ** Look & Feel
 *** Remove startup screen
-We use an actual replacement for it, keep reading or head directly to [[dashboard]]
+We use an actual replacement for it, keep reading or head directly to [[Dashboard][dashboard]]
 #+BEGIN_SRC emacs-lisp
 (setq inhibit-startup-message t)
 #+END_SRC
