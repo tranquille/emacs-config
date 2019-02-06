@@ -49,7 +49,7 @@
    '("bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default))
  '(fancy-battery-mode t)
  '(package-selected-packages
-   '(diminish org-bullets htmlize sudo-edit company-jedi yasnippet-snippets company flycheck yasnippet mark-multiple zzz-to-char hungry-delete expand-region rainbow-delimiters rainbow-mode beacon helm linum-relative swiper switch-window which-key ivy fancy-battery spaceline dashboard projectile pretty-mode magit spacemacs-theme use-package)))
+   '(js2-mode tide diminish org-bullets htmlize sudo-edit company-jedi yasnippet-snippets company flycheck yasnippet mark-multiple zzz-to-char hungry-delete expand-region rainbow-delimiters rainbow-mode beacon helm linum-relative swiper switch-window which-key ivy fancy-battery spaceline dashboard projectile pretty-mode magit spacemacs-theme use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
