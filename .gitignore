@@ -5,4 +5,4 @@
 /config/
 /auto-save-list/
 .emacs.desktop
-projectile-bookmarks.eld
+*.eld
