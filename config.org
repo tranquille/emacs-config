@@ -147,6 +147,21 @@ If you prefer the 12hr-format, change the variable to =nil= instead of =t=.
       (display-battery-mode)))
 
 #+END_SRC
+* The terminal
+** Default shell should be zsh
+I don’t know why this is a thing, but asking me what shell to launch every single time I open a terminal makes me want to slap babies, this gets rid of it. This goes without saying but you can replace bash with your shell of choice.
+#+BEGIN_SRC emacs-lisp
+  (defvar my-term-shell "/usr/local/bin/zsh")
+  (defadvice ansi-term (before force-bash)
+    (interactive (list my-term-shell)))
+  (ad-activate 'ansi-term)
+#+END_SRC
+** Easy to remember keybinding
+Super + Enter to launch a new terminal.
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "<s-return>") 'ansi-term)
+
+#+END_SRC
 * Git integration
 Countless are the times where I opened ansi-term to use =git= on something.
 These times are also something that I'd prefer stay in the past, since =magit= is
