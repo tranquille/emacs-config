@@ -45,6 +45,12 @@ Changes =lambda= to an actual symbol and a few others as well, only in the GUI v
       (global-pretty-mode t)))
 
 #+END_SRC
+* Mac OS related
+** fix some keys
+On mac os the keybindgs a somehow messed up, without this settings we are not able to type a couple characters like braces. 
+#+BEGIN_SRC emacs-lisp
+(setq mac-right-option-modifier nil)
+#+END_SRC
 * Functionality
 ** Disable backups and auto-saves
 #+BEGIN_SRC emacs-lisp
