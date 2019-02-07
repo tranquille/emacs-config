@@ -208,6 +208,7 @@ It's beautiful
 #+BEGIN_SRC emacs-lisp
   (use-package which-key
     :ensure t
+    :diminish which-key-mode
     :config
       (which-key-mode))
 #+END_SRC
@@ -313,6 +314,7 @@ Every now and then all of us feel the urge to be productive and write some code.
 #+BEGIN_SRC emacs-lisp
   (use-package linum-relative
     :ensure t
+    :diminish linum-relative-mode
     :config
     (setq linum-relative-current-symbol "")
     (add-hook 'prog-mode-hook 'linum-relative-mode))
@@ -321,6 +323,7 @@ Every now and then all of us feel the urge to be productive and write some code.
 #+BEGIN_SRC emacs-lisp
   (use-package helm
     :ensure t
+    :diminish helm-mode
     :bind
     ("C-x C-f" . 'helm-find-files)
     ("C-x C-b" . 'helm-buffers-list)
@@ -390,8 +393,6 @@ I like =M-s= for it, same as =C-s= is for moving by searching string, now =M-s= 
     :bind
       ("M-s" . avy-goto-char))
 #+END_SRC
-
-
 * Text manipulation
 Here I shall collect self-made functions that make editing text easier.
 
@@ -449,10 +450,6 @@ And this quickly deletes a line.
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "C-c l k") 'kill-whole-line)
 #+END_SRC
-
-
-
-
 * Minor conveniences
 Emacs is at it’s best when it just does things for you, shows you the way, guides you so to speak. This can be best achieved using a number of small extensions. While on their own they might not be particularly impressive. Together they create a nice environment for you to work in.
 ** Visiting the configuration
@@ -501,6 +498,7 @@ While changing buffers or workspaces, the first thing you do is look for your cu
 #+BEGIN_SRC emacs-lisp
   (use-package beacon
     :ensure t
+    :diminish beacon-mode
     :config
     (beacon-mode 1))
 
@@ -510,6 +508,7 @@ Mostly useful if you are into web development or game development. Every time em
 #+BEGIN_SRC emacs-lisp
   (use-package rainbow-mode
     :ensure t
+    :diminish rainbow-mode
     :init
     (add-hook 'prog-mode-hook 'rainbow-mode))
 #+END_SRC
@@ -523,6 +522,7 @@ Color parentheses and other delimiters depending on their depth, useful for any 
 #+BEGIN_SRC emacs-lisp
   (use-package rainbow-delimiters
       :ensure t
+      :diminish rainbow-delimiters-mode
       :init
       (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
 
@@ -541,6 +541,7 @@ On the list of things I like doing, deleting big whitespaces is pretty close to 
 #+BEGIN_SRC emacs-lisp
   (use-package hungry-delete
     :ensure t
+    :diminish hungry-delete-mode
     :config
     (global-hungry-delete-mode))
 
@@ -722,6 +723,29 @@ Each category also has additional settings.
                         '(javascript-jshint json-jsonlint)))
   (setq-default flycheck-temp-prefix ".flycheck")
 
+  ;; use local eslint from node_modules before global
+  ;; http://emacs.stackexchange.com/questions/21205/flycheck-with-file-relative-eslint-executable
+  (defun bk/use-eslint-from-node-modules ()
+    (let* ((root (locate-dominating-file
+                  (or (buffer-file-name) default-directory)
+                  "node_modules"))
+           (eslint (and root
+                        (expand-file-name "node_modules/.bin/eslint"
+                                          root))))
+      (when (and eslint (file-executable-p eslint))
+        (setq-local flycheck-javascript-eslint-executable eslint))))
+  (add-hook 'flycheck-mode-hook #'bk/use-eslint-from-node-modules)
+
+#+END_SRC
+**** add node modules path
+#+BEGIN_SRC emacs-lisp
+  (use-package add-node-modules-path
+    :ensure t
+    :hook (
+           (typescript-mode . #'add-node-modules-path)
+           (js-mode . #'add-node-modules-path)
+           (js2-mode . #'add-node-modules-path)
+           (rjsx-mode . #'add-node-modules-path)))
 #+END_SRC
 **** js2-mode
 #+BEGIN_SRC emacs-lisp
@@ -738,15 +762,30 @@ Each category also has additional settings.
             js2-concat-multiline-strings nil
             js2-include-node-externs t
             js2-skip-preprocessor-directives t
-            js2-strict-inconsistent-return-warning nil)))
+            js2-strict-inconsistent-return-warning nil)
+      (setq-default js2-strict-trailing-comma-warning nil)))
 #+END_SRC
 **** prettier-js
 #+BEGIN_SRC emacs-lisp
   (use-package prettier-js
     :ensure t
     :config
-    (setq prettier-js-command "./node_modules/.bin/prettier")
-    (add-hook 'js2-mode-hook 'prettier-js-mode))
+    (add-hook 'js2-mode-hook 'prettier-js-mode)
+    (add-hook 'rjsx-mode-hook 'prettier-js-mode))
+
+    ;; use local prettier-eslint from node_modules before global
+    ;; http://emacs.stackexchange.com/questions/21205/flycheck-with-file-relative-eslint-executable
+    (defun bk/use-prettier-eslint-from-node-modules ()
+      (let* ((root (locate-dominating-file
+                    (or (buffer-file-name) default-directory)
+                    "node_modules"))
+             (prettier-eslint (and root
+                          (expand-file-name "node_modules/.bin/prettier-eslint"
+                                            root))))
+        (when (and prettier-eslint (file-executable-p prettier-eslint))
+          (setq-local prettier-js-command prettier-eslint
+                      prettier-js-args "--ignore \"**/*.spec.js*.snap\""))))
+    (add-hook 'prettier-js-mode-hook #'bk/use-eslint-from-node-modules)
 #+END_SRC
 **** json-mode
 #+BEGIN_SRC emacs-lisp
@@ -763,14 +802,17 @@ Each category also has additional settings.
 #+END_SRC
 **** tide
 #+BEGIN_SRC emacs-lisp
-  (use-package tide
-    :ensure t
-    :after (typescript-mode company flycheck)
-    :hook ((typescript-mode . tide-setup)
-           (js-mode . tide-setup)
-           (js2-mode . tide-setup)
-           (rjsx-mode . tide-setup)
-           (typescript-mode . tide-hl-identifier-mode)))
+    (use-package tide
+      :ensure t
+      :after (js2-mode typescript-mode company flycheck)
+      :hook ((typescript-mode . tide-setup)
+             (js-mode . tide-setup)
+             (js2-mode . tide-setup)
+             (rjsx-mode . tide-setup)
+             (typescript-mode . tide-hl-identifier-mode))
+      :config
+      ;; configure javascript-tide checker to run after your default javascript checker
+      (flycheck-add-next-checker 'javascript-eslint 'javascript-tide 'append))
 #+END_SRC
 
 * Remote editing
@@ -852,14 +894,8 @@ Edit this list as you see fit!
   (use-package diminish
     :ensure t
     :init
-    (diminish 'which-key-mode)
-    (diminish 'linum-relative-mode)
-    (diminish 'hungry-delete-mode)
     (diminish 'visual-line-mode)
     (diminish 'subword-mode)
-    (diminish 'beacon-mode)
     (diminish 'page-break-lines-mode)
-    (diminish 'auto-revert-mode)
-    (diminish 'rainbow-delimiters-mode)
-    (diminish 'rainbow-mode))
+    (diminish 'auto-revert-mode))
 #+END_SRC
