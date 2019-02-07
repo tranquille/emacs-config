@@ -15,25 +15,62 @@
 (add-hook 'emacs-startup-hook 'startup/revert-file-name-handler-alist)
 (add-hook 'emacs-startup-hook 'startup/reset-gc)
 
-;;; This is all kinds of necessary
-(require 'package)
-(setq package-enable-at-startup nil)
+;; Straight
+(setq straight-use-package-by-default t)
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+
+;; use-package
+(straight-use-package 'use-package)
+(setq straight-use-package-by-default t)
+
+;; install a recent org mode version and prevent loading of deafault see also:
+;; https://github.com/raxod502/straight.el#installing-org-with-straightel
+(require 'subr-x)
+(straight-use-package 'git)
+
+(defun org-git-version ()
+  "The Git version of org-mode.
+Inserted by installing org-mode or when a release is made."
+  (require 'git)
+  (let ((git-repo (expand-file-name
+                   "straight/repos/org/" user-emacs-directory)))
+    (string-trim
+     (git-run "describe"
+              "--match=release\*"
+              "--abbrev=6"
+              "HEAD"))))
+
+(defun org-release ()
+  "The release version of org-mode.
+Inserted by installing org-mode or when a release is made."
+  (require 'git)
+  (let ((git-repo (expand-file-name
+                   "straight/repos/org/" user-emacs-directory)))
+    (string-trim
+     (string-remove-prefix
+      "release_"
+      (git-run "describe"
+               "--match=release\*"
+               "--abbrev=0"
+               "HEAD")))))
+
+(provide 'org-version)
+
+(straight-use-package 'org) ; or org-plus-contrib if desired
 
 (setq gnutls-verify-error t
       tls-checktrust t)
-
-;;; remove SC if your are not using sunrise commander and org if yout like outdated packages
-(setq package-archives '(("ELPA"  . "https://tromey.com/elpa/")
-			 ("gnu"   . "https://elpa.gnu.org/packages/")
-			 ("melpa" . "https://melpa.org/packages/")
-			 ("org"   . "https://orgmode.org/elpa/" )))
-
-(unless package--initialized (package-initialize t))
-
-;;; Bootstrapping use-package
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
 
 ;;; This is the actual config file. It is omitted if it doesn't exist so emacs won't refuse to launch.
 (when (file-readable-p "~/.emacs.d/config.org")
@@ -49,7 +86,7 @@
    '("bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default))
  '(fancy-battery-mode t)
  '(package-selected-packages
-   '(js2-mode tide diminish org-bullets htmlize sudo-edit company-jedi yasnippet-snippets company flycheck yasnippet mark-multiple zzz-to-char hungry-delete expand-region rainbow-delimiters rainbow-mode beacon helm linum-relative swiper switch-window which-key ivy fancy-battery spaceline dashboard projectile pretty-mode magit spacemacs-theme use-package)))
+   '()))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
