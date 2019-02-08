@@ -192,7 +192,7 @@ Do me the favor, do me the biggest favor, matter of fact do yourself the biggest
 
 ** a prerequisite for others packages
 #+BEGIN_SRC emacs-lisp
-  (use-package ivy)
+;;  (use-package ivy)
 #+END_SRC
 ** scrolling and why does the screen move
 I don't know to be honest, but this little bit of code makes scrolling with emacs a lot nicer.
@@ -257,12 +257,6 @@ This annoyed me so much I wrote these two, they take care of it.
     (balance-windows)
     (other-window 1))
   (global-set-key (kbd "C-x 3") 'split-and-follow-vertically)
-#+END_SRC
-** swiper and why is the default search so lame
-I like me some searching, the default search is very meh. In emacs, you mostly use search to get around your buffer, much like with avy, but sometimes it doesn't hurt to search for entire words or mode, swiper makes sure this is more efficient.
-#+BEGIN_SRC emacs-lisp
-  (use-package swiper-helm
-    :bind ("C-s" . 'swiper))
 #+END_SRC
 ** buffers and why I hate list-buffers
 Another big thing is, buffers. If you use emacs, you use buffers, everyone loves them.
@@ -384,6 +378,14 @@ Helm documentation advices usage of wgrep, so we do...
   (use-package helm-descbinds
     :config
     (helm-descbinds-mode))
+#+END_SRC
+**** helm-swoop and why is the default search so lame
+I like me some searching, the default search is very meh. In emacs, you mostly use search to get around your buffer, much like with avy, but sometimes it doesn't hurt to search for entire words or mode, this package  makes sure this is more efficient.
+#+BEGIN_SRC emacs-lisp
+  (use-package helm-swoop
+    :bind (("C-s" . 'helm-swoop)
+	   ("C-r" . 'helm-swoop))
+    )
 #+END_SRC
 ** avy
 Many times have I pondered how I can move around buffers even quicker.
@@ -754,9 +756,18 @@ Each category also has additional settings.
             js2-strict-inconsistent-return-warning nil)
       (setq-default js2-strict-trailing-comma-warning nil)))
 #+END_SRC
+**** js2-refactor
+#+begin_src emacs-lisp
+  (use-package js2-refactor
+    :hook (js2-mode . #'js2-refactor-mode)
+    :defer 1
+    :init
+    (js2r-add-keybindings-with-prefix "C-c m"))
+#+end_src
 **** prettier-js
 #+BEGIN_SRC emacs-lisp
   (use-package prettier-js
+    :defer 1
     :config
     (add-hook 'js2-mode-hook 'prettier-js-mode)
     (add-hook 'rjsx-mode-hook 'prettier-js-mode))
@@ -784,6 +795,7 @@ Each category also has additional settings.
 **** jsx
 #+BEGIN_SRC emacs-lisp
   (use-package rjsx-mode
+    :defer 1
     :mode "\\.jsx$")
 #+END_SRC
 **** tide
@@ -862,19 +874,20 @@ Makes it all look a bit nicer, I hate looking at asterisks.
 Hitting tab after an "<el" in an org-mode file will create a template for elisp insertion.
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'org-structure-template-alist
-	       '("el" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC"))
+               '("el" . "src emacs-lisp")
+               '("sh" . "src sh"))
 #+END_SRC
 
 * Golden Ration
 To get the most from my notebook screen it want to concentrate on the current window. 
 #+BEGIN_SRC emacs-lisp
   (use-package golden-ratio
-;;    :defer t
+    :defer t
     :diminish golden-ratio-mode
     :config
     (golden-ratio-mode 1)
-  ;;  :init
-  ;;  (setq golden-ratio-auto-scale t)
+    :init
+    (setq golden-ratio-auto-scale t)
 )
 #+END_SRC
 * Diminishing modes
