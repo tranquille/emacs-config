@@ -104,8 +104,9 @@
  '(custom-safe-themes
    '("bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default))
  '(fancy-battery-mode t)
+ '(guru-global-mode t)
  '(package-selected-packages
-   '(zzz-to-char yasnippet-snippets which-key wgrep use-package tide switch-window sudo-edit spacemacs-theme spaceline slime-company rjsx-mode rainbow-mode rainbow-delimiters pretty-mode prettier-js org-bullets mark-multiple magit linum-relative json-mode js2-refactor hungry-delete htmlize helm-swoop helm-projectile helm-ls-git helm-descbinds golden-ratio fancy-battery expand-region diminish dashboard company-shell company-jedi beacon add-node-modules-path)))
+   '(dockerfile-mode nginx-mode guru-mode gitlab-ci-mode-flycheck gitlab-ci-mode try yaml-mode helm-ag restclient cargo lsp-mode rust-mode zzz-to-char yasnippet-snippets which-key wgrep use-package tide switch-window sudo-edit spacemacs-theme spaceline slime-company rjsx-mode rainbow-mode rainbow-delimiters pretty-mode prettier-js org-bullets mark-multiple magit linum-relative json-mode js2-refactor hungry-delete htmlize helm-swoop helm-projectile helm-ls-git helm-descbinds golden-ratio fancy-battery expand-region diminish dashboard company-shell company-jedi beacon add-node-modules-path)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

@@ -52,6 +52,7 @@ If you like using any of those, change -1 to 1.
 (when window-system (add-hook 'prog-mode-hook 'hl-line-mode))
 #+END_SRC
 *** Pretty symbols
+
 Changes =lambda= to an actual symbol and a few others as well, only in the GUI version though.
 #+BEGIN_SRC emacs-lisp
   (when window-system
@@ -60,6 +61,7 @@ Changes =lambda= to an actual symbol and a few others as well, only in the GUI v
       (global-pretty-mode t)))
 
 #+END_SRC
+
 ** Mac OS related
 *** fix some keys
 On mac os the keybindgs a somehow messed up, without this settings we are not able to type a couple characters like braces. 
@@ -86,6 +88,13 @@ Lets us use asynchronous processes wherever possible, pretty useful...
 #+BEGIN_SRC emacs-lisp
 (setq browse-url-browser-function 'browse-url-generic
       browse-url-generic-program "firefox")
+#+END_SRC
+** guru mode
+#+BEGIN_SRC emacs-lisp
+  (use-package guru-mode
+    :config
+    (guru-global-mode +1)
+    (setq guru-warn-only t))
 #+END_SRC
 * Projectile
 Projectile is an awesome project manager, mostly because it recognizes
@@ -387,6 +396,11 @@ I like me some searching, the default search is very meh. In emacs, you mostly u
 	   ("C-r" . 'helm-swoop))
     )
 #+END_SRC
+**** helm-ag for search inside of a project with ag/rg/grep
+#+BEGIN_SRC emacs-lisp
+  (use-package helm-ag)
+
+#+END_SRC
 ** avy
 Many times have I pondered how I can move around buffers even quicker.
 I'm glad to say, that avy is precisely what I needed, and it's precisely what you need as well.
@@ -551,6 +565,7 @@ On the list of things I like doing, deleting big whitespaces is pretty close to 
 
 #+END_SRC
 ** Zapping to char
+
 A nifty little package that kills all text between your cursor and a selected character. A lot more useful than you might think. If you wish to include the selected character in the killed region, change zzz-up-to-char into zzz-to-char.
 
 #+BEGIN_SRC emacs-lisp
@@ -558,6 +573,12 @@ A nifty little package that kills all text between your cursor and a selected ch
   :bind ("M-z" . zzz-up-to-char))
 
 #+END_SRC
+** Try
+If you wan't try a emacs package without installing it this is the package you need
+#+BEGIN_EXPORT emacs-lisp
+  (use-package try
+    :ensure t)
+#+END_EXPORT
 * Kill ring
 There is a lot of customization to the kill ring, and while I have not used it much before,
 I decided that it was time to change that.
@@ -573,6 +594,13 @@ great. It's easy and intuitive to use, shows its options at a keypress and much 
 ** magit
 #+BEGIN_SRC emacs-lisp
   (use-package magit)
+#+END_SRC
+
+** ediff
+Diffing with magit and ediff is wonderfull, but the seprate command frame sucks, so we change it
+#+BEGIN_SRC emacs-lisp
+  (setq ediff-window-setup-function 'ediff-setup-windows-plain)
+
 #+END_SRC
 * Programming
 ** yasnippet
@@ -605,10 +633,40 @@ I prefer =C-n= and =C-p= to move around the items, so I rempa those accordingly.
       (define-key company-active-map (kbd "M-n") nil)
       (define-key company-active-map (kbd "M-p") nil)
       (define-key company-active-map (kbd "C-n") #'company-select-next)
-      (define-key company-active-map (kbd "C-p") #'company-select-previous)
-      (define-key company-active-map (kbd "SPC") #'company-abort))
+      (define-key company-active-map (kbd "C-p") #'company-select-previous))
+      ;;(define-key company-active-map (kbd "SPC") #'company-abort))
 #+END_SRC
 
+** lsp
+#+BEGIN_SRC emacs-lisp
+  (use-package lsp-mode
+    :ensure t
+    :commands lsp
+    :config
+    (setq lsp-print-io t
+          lsp-prefer-flymake nil
+          lsp-auto-configure t))
+
+#+END_SRC
+*** completion backend wireing
+#+BEGIN_SRC emacs-lisp
+  (use-package company-lsp
+    :ensure t
+    :after (company lsp-mode)
+    :commands company-lsp
+    :init
+    (add-to-list 'company-backends 'company-lsp))
+
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (use-package lsp-ui
+    :ensure t
+    :after lsp-mode
+    :commands lsp-ui-mode
+    :config
+    (setq lsp-ui-flycheck-enable t))
+#+END_SRC
 ** specific languages
 Be it for code or prose, completion is a must.
 Each category also has additional settings.
@@ -732,12 +790,12 @@ Each category also has additional settings.
 #+END_SRC
 **** add node modules path
 #+BEGIN_SRC emacs-lisp
-  (use-package add-node-modules-path
-    :hook (
-           (typescript-mode . #'add-node-modules-path)
-           (js-mode . #'add-node-modules-path)
-           (js2-mode . #'add-node-modules-path)
-           (rjsx-mode . #'add-node-modules-path)))
+  ;; (use-package add-node-modules-path
+  ;;   :hook (
+  ;;          (typescript-mode . #'add-node-modules-path)
+  ;;          (js-mode . #'add-node-modules-path)
+  ;;          (js2-mode . #'add-node-modules-path)
+  ;;          (rjsx-mode . #'add-node-modules-path)))
 #+END_SRC
 **** js2-mode
 #+BEGIN_SRC emacs-lisp
@@ -759,9 +817,9 @@ Each category also has additional settings.
 **** js2-refactor
 #+begin_src emacs-lisp
   (use-package js2-refactor
-    :hook (js2-mode . #'js2-refactor-mode)
     :defer 1
-    :init
+    :config
+    (add-hook 'js2-mode-hook #'js2-refactor-mode)
     (js2r-add-keybindings-with-prefix "C-c m"))
 #+end_src
 **** prettier-js
@@ -812,6 +870,93 @@ Each category also has additional settings.
       (flycheck-add-next-checker 'javascript-eslint 'javascript-tide 'append))
 #+END_SRC
 
+*** rust
+**** rust-mode
+#+BEGIN_SRC emacs-lisp
+  (use-package rust-mode
+    :ensure t
+    :config
+    (setq rust-format-on-save t))
+
+#+END_SRC
+**** lsp-rust
+#+BEGIN_SRC emacs-lisp
+  (use-package lsp-rust
+    :ensure t
+    :after (lsp-mode)
+    :hook rust-mode
+    :init
+    ;;(setq lsp-rust-rls-command '("rustup" "run" "nightly" "rls"))
+    (setq lsp-rust-rls-command '("rustup" "run" "stable" "rls"))
+    )
+#+END_SRC
+**** flycheck
+
+#+BEGIN_SRC emacs-lisp
+  (use-package flycheck-rust
+    :ensure t
+    :config
+    (add-hook 'flycheck-mode-hook #'flycheck-rust-setup))
+  (add-hook 'rust-mode-hook 'flycheck-mode)
+#+END_SRC
+
+Show the flycheck information inline
+#+BEGIN_SRC emacs-lisp
+  (use-package flycheck-inline
+    :ensure t
+    :config
+    (add-hook 'flycheck-mode-hook #'flycheck-inline-mode))
+#+END_SRC
+**** cargo
+#+BEGIN_SRC emacs-lisp
+  (use-package cargo
+    :ensure t
+    :after rust-mode
+    :hook ((rust-mode . cargo-minor-mode)))
+
+#+END_SRC
+
+*** yaml
+#+BEGIN_SRC emacs-lisp
+  (use-package yaml-mode
+    :mode ("\\ya?ml\\'")
+    :config
+    (add-hook 'yaml-mode-hook '(lambda ()
+                                 (define-key yaml-mode-map "\C-m" 'newline-and-indent))))
+#+END_SRC
+*** nginx
+#+BEGIN_SRC emacs-lisp
+  (use-package nginx-mode)
+#+END_SRC
+
+
+** misc
+*** restclient
+
+#+BEGIN_SRC emacs-lisp
+(use-package restclient)
+#+END_SRC
+*** docker
+#+BEGIN_SRC emacs-lisp
+(use-package dockerfile-mode)
+#+END_SRC
+*** gitlab-ci
+I wan't to have completion and linting for gitlab-ci.yml files. 
+#+BEGIN_SRC emacs-lisp
+  (use-package gitlab-ci-mode
+    :config
+    (setq gitlab-ci-api-token "hfcWJoPurfzSw_iU1Vy"
+          gitlab-ci-url "https://gitlab.wild-beavers.de"))
+
+#+END_SRC
+**** flycheck
+#+BEGIN_SRC emacs-lisp
+  (use-package gitlab-ci-mode-flycheck
+    :after flycheck gitlab-ci-mode
+    :init
+    (gitlab-ci-mode-flycheck-enable))
+
+#+END_SRC
 * Remote editing
 I have no need to directly edit files over SSH, but what I do need is a way to edit files as root.
 Opening up nano in a terminal as root to play around with grubs default settings is a no-no, this solves that.
