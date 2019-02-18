@@ -602,6 +602,16 @@ Diffing with magit and ediff is wonderfull, but the seprate command frame sucks,
   (setq ediff-window-setup-function 'ediff-setup-windows-plain)
 
 #+END_SRC
+* Treeview
+#+BEGIN_SRC emacs-lisp
+  (use-package treemacs)
+
+#+END_SRC
+* Hydra
+#+BEGIN_SRC emacs-lisp
+  (use-package hydra)
+
+#+END_SRC
 * Programming
 ** yasnippet
 #+BEGIN_SRC emacs-lisp
@@ -928,7 +938,26 @@ Show the flycheck information inline
 #+BEGIN_SRC emacs-lisp
   (use-package nginx-mode)
 #+END_SRC
+*** java
+**** dap
+In order to debug our java application we need this
+#+BEGIN_SRC emacs-lisp
+  (use-package dap-mode
+    :after lsp-mode
+    :config
+    (dap-mode t)
+    (dap-ui-mode t))
 
+  (use-package dap-java :after (lsp-java))
+  (use-package lsp-java-treemacs :after (treemacs))
+#+END_SRC
+**** lsp and eclipse.jdt.ls
+#+BEGIN_SRC emacs-lisp
+  (use-package lsp-java
+    :after lsp
+    :config
+    (add-hook 'java-mode-hook 'lsp))
+#+END_SRC
 
 ** misc
 *** restclient
